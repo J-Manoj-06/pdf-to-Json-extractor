@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PDF Text Structurer</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel">
+        <div class="header">
+          <p>Textbook JSON Builder</p>
+          <h1>Extract a book into board, class, subject, chapters, and subtopics.</h1>
+        </div>
+
+        <form id="uploadForm" class="form">
+          <label>
+            Board
+            <select name="board" required>
+              <option value="CBSE">CBSE</option>
+              <option value="Metric">Metric</option>
+              <option value="State Board">State Board</option>
+            </select>
+          </label>
+
+          <label>
+            Class
+            <select name="class_name" required>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+            </select>
+          </label>
+
+          <label>
+            Subject
+            <input name="subject" placeholder="Math, Science, English..." required />
+          </label>
+
+          <label>
+            Book title
+            <input name="book_title" placeholder="Optional" />
+          </label>
+
+          <label class="file">
+            PDF book
+            <input name="file" type="file" accept="application/pdf" required />
+          </label>
+
+          <button type="submit">Extract JSON</button>
+        </form>
+      </section>
+
+      <section class="result">
+        <div class="resultbar">
+          <strong>Output</strong>
+          <a id="downloadLink" href="#" hidden>Open JSON</a>
+        </div>
+        <pre id="output">Upload a PDF to see the structured JSON preview.</pre>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
