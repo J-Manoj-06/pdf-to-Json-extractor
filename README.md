@@ -12,6 +12,12 @@ board -> class -> subject -> chapters -> subtopics -> contents
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+python app/main.py
+```
+
+Or, from the project root:
+
+```powershell
 uvicorn app.main:app --reload
 ```
 
@@ -26,7 +32,7 @@ Generated JSON files are stored in `storage/outputs/`.
 
 ## Notes
 
-This first version extracts selectable PDF text with PyMuPDF. Scanned books need OCR support later, for example with Tesseract or a vision/OCR API.
+This version extracts selectable PDF text with pdfplumber. Scanned books still need OCR support later, for example with Tesseract or a vision/OCR API.
 
 The parser uses textbook-style heading heuristics:
 

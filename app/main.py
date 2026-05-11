@@ -1,5 +1,11 @@
+import json
 from pathlib import Path
 from uuid import uuid4
+
+if __package__ in {None, ""}:
+    import sys
+
+    sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
@@ -53,14 +59,20 @@ async def extract_book(
         source_file=safe_name,
     )
 
-    book = parse_pdf_to_book(pdf_path, metadata)
-    output_path.write_text(book.model_dump_json(indent=2), encoding="utf-8")
+    try:
+        book = parse_pdf_to_book(pdf_path, metadata)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:  # pragma: no cover - defensive API guard
+        raise HTTPException(status_code=500, detail="Failed to process the PDF.") from exc
+
+    output_path.write_text(json.dumps(book, indent=2, ensure_ascii=False), encoding="utf-8")
 
     return JSONResponse(
         {
             "id": upload_id,
             "jsonUrl": f"/api/outputs/{upload_id}",
-            "book": book.model_dump(),
+            "book": book,
         }
     )
 
@@ -71,3 +83,9 @@ def get_output(output_id: str) -> FileResponse:
     if not output_path.exists():
         raise HTTPException(status_code=404, detail="Output not found.")
     return FileResponse(output_path, media_type="application/json", filename=f"{output_id}.json")
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
